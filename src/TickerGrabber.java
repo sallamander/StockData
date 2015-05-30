@@ -64,7 +64,6 @@ public class TickerGrabber implements Runnable {
     private ArrayList getStockTickers(List stockTickers) {
         String ticker = null, line;  
         ArrayList errorTickers = new ArrayList(); 
-        ArrayList csvOutput = new ArrayList(); 
         String[] lineSplit = new String[4]; 
         
         for(Iterator tickers = stockTickers.iterator(); tickers.hasNext(); ) {
@@ -77,27 +76,21 @@ public class TickerGrabber implements Runnable {
         }   
            
         try {
-            StringBuilder builder = new StringBuilder(); 
-
             URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
             URLConnection conn = tickerLookup.openConnection(); 
             try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
                 BufferedReader data = new BufferedReader(in); ) {
                 while((line = data.readLine()) != null) {
+                    // If the line contains N/A, then we don't want to store it. 
                     if(!line.contains("N/A")) {
                         lineSplit = line.split("\","); 
-                        csvOutput.add(lineSplit[0].replace("\"", "")); 
-                        csvOutput.add(lineSplit[1].replace("\"", "")); 
-                        csvOutput.add(lineSplit[2].replace("\"", "")); 
-                        csvOutput.add(lineSplit[3].replace("\"", "")); 
+                        endList.add(lineSplit[0].replace("\"", "")); 
+                        endList.add(lineSplit[1].replace("\"", "")); 
+                        endList.add(lineSplit[2].replace("\"", "")); 
+                        endList.add(lineSplit[3].replace("\"", "")); 
                     }
                 }
-                in.close();
-                // If either the Stock Exchange or price is N/A, then this ticker doesn't exist 
-                // (or if for some strange reason the API spit out N/A, we don't want it.                     
-                if(!builder.toString().isEmpty() && !builder.toString().contains("N/A")) {
-                    storeData(builder); 
-                }
+                in.close();               
                 finalTickers.add(ticker);
             }
         } catch(MalformedURLException mue) {
@@ -108,22 +101,6 @@ public class TickerGrabber implements Runnable {
             System.out.println("IO Error: " + ioe.getMessage()); 
         } 
     return errorTickers; 
-    }
-    
-    private void storeData(StringBuilder builder) {
-        String builder2;
-        String[] dataPoints = new String[4];
-        
-        // First we need to parse the data and get it into the format we want for input. 
-        builder2 = builder.toString(); 
-        // Now we'll parse the data. It's a little tricky to parse with commas when some 
-        // names have commas in them, so we'll split the data and then filter out the beginning
-        // quotation marks for the first three pieces. 
-        dataPoints = builder2.split("\",");
-        for (int i = 0; i < 4; i++) {
-            dataPoints[i] = dataPoints[i].substring(1, dataPoints[i].length()); 
-            endList.add(dataPoints[i]); 
-        }       
     }
     
     private void storeTickers(ArrayList endList) {
