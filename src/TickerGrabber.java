@@ -62,6 +62,7 @@ public class TickerGrabber implements Runnable {
     }
     
     private ArrayList getStockTickers(List stockTickers) {
+        System.out.println(stockTickers.size()); 
         String ticker = null, line;  
         ArrayList errorTickers = new ArrayList(); 
         String[] lineSplit = new String[4]; 
@@ -69,39 +70,41 @@ public class TickerGrabber implements Runnable {
         for(Iterator tickers = stockTickers.iterator(); tickers.hasNext(); ) {
             // First we'll do one letter. 
            ticker = (String)tickers.next(); 
-           // Now we'll append all of the the other letters in this ticker to that. 
-           while(tickers.hasNext()) {
+           // Now we'll append up to 1000 other tickers to this. 
+           int i = 0; 
+           while(tickers.hasNext() & i <= 499) {
                ticker += '+' + (String)tickers.next(); 
-           }
-        }   
+               i += 1; 
+           }   
            
-        try {
-            System.out.println(ticker); 
-            URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
-            URLConnection conn = tickerLookup.openConnection(); 
-            try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
-                BufferedReader data = new BufferedReader(in); ) {
-                while((line = data.readLine()) != null) {
-                    // If the line contains N/A, then we don't want to store it. 
-                    if(!line.contains("N/A")) {
-                        lineSplit = line.split("\","); 
-                        System.out.println(lineSplit[0] + ' ' + lineSplit[1] + ' ' + lineSplit[2] + ' ' + lineSplit[3]); 
-                        endList.add(lineSplit[0].replace("\"", "")); 
-                        endList.add(lineSplit[1].replace("\"", "")); 
-                        endList.add(lineSplit[2].replace("\"", "")); 
-                        endList.add(lineSplit[3].replace("\"", "")); 
+            try {
+                URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
+                // System.out.println(tickerLookup.toString());            
+                URLConnection conn = tickerLookup.openConnection(); 
+                try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
+                    BufferedReader data = new BufferedReader(in); ) {
+                    while((line = data.readLine()) != null) {
+                        // If the line contains N/A, then we don't want to store it. 
+                        if(!line.contains("N/A")) {
+                            lineSplit = line.split("\","); 
+                            // System.out.println(lineSplit[0] + ' ' + lineSplit[1] + ' ' + lineSplit[2] + ' ' + lineSplit[3]); 
+                            endList.add(lineSplit[0].replace("\"", "")); 
+                            endList.add(lineSplit[1].replace("\"", "")); 
+                            endList.add(lineSplit[2].replace("\"", "")); 
+                            endList.add(lineSplit[3].replace("\"", "")); 
+                        }
                     }
+                    in.close();               
+                    finalTickers.add(ticker);
                 }
-                in.close();               
-                finalTickers.add(ticker);
-            }
-        } catch(MalformedURLException mue) {
-            System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
-        } catch(IOException ioe) {
-            System.out.println(ticker); 
-            errorTickers.add(ticker); 
-            System.out.println("IO Error: " + ioe.getMessage()); 
-        } 
+            } catch(MalformedURLException mue) {
+                System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
+            } catch(IOException ioe) {
+                System.out.println(ticker); 
+                errorTickers.add(ticker); 
+                System.out.println("IO Error: " + ioe.getMessage()); 
+            } 
+        }
     return errorTickers; 
     }
     

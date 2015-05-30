@@ -38,7 +38,7 @@ public class TickerLocater {;
         // will create errors with ports/socket connections and such, but what we'll handle that 
         // within the actual tickerGrabbers themselves. Basically, we'll just have the tickerGrabbers 
         // keep accessing the URL until they succeed. 
-        int num = 1; // This will be the number of tickerGrabbers we want to make. 
+        int num = 10; // This will be the number of tickerGrabbers we want to make. 
         int breakPoint = Math.round(tickerList.size() / num); 
         breakPoint = Math.max(1, breakPoint); 
         ArrayList tickerGrabbers = new ArrayList(); 
