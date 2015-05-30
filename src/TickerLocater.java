@@ -77,21 +77,20 @@ public class TickerLocater {;
             tickerList.add(ticker); 
             // Right below this is the part where we would add on 2, 3, or 4 letters and 
             // grab all stock tickers that are 1-4 letters. 
-            /*
             for(Iterator letter2 = letters.iterator(); letter2.hasNext(); ) {
                 ticker2 = (String)letter2.next(); 
                 tickerList.add(ticker + ticker2);
                 for(Iterator letter3 = letters.iterator(); letter3.hasNext(); ) {
                     ticker3 = (String)letter3.next(); 
                     tickerList.add(ticker + ticker2 + ticker3); 
+                    /*
                     for(Iterator letter4 = letters.iterator(); letter4.hasNext(); ) {
                         ticker4 = (String)letter4.next(); 
                         tickerList.add(ticker + ticker2 + ticker3 + ticker4); 
                     }
+                    */
                 }
-            
             }
-           */
         }        
         return tickerList; 
     }

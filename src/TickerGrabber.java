@@ -76,6 +76,7 @@ public class TickerGrabber implements Runnable {
         }   
            
         try {
+            System.out.println(ticker); 
             URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
             URLConnection conn = tickerLookup.openConnection(); 
             try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
@@ -84,6 +85,7 @@ public class TickerGrabber implements Runnable {
                     // If the line contains N/A, then we don't want to store it. 
                     if(!line.contains("N/A")) {
                         lineSplit = line.split("\","); 
+                        System.out.println(lineSplit[0] + ' ' + lineSplit[1] + ' ' + lineSplit[2] + ' ' + lineSplit[3]); 
                         endList.add(lineSplit[0].replace("\"", "")); 
                         endList.add(lineSplit[1].replace("\"", "")); 
                         endList.add(lineSplit[2].replace("\"", "")); 
