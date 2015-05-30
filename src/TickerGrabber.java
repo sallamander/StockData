@@ -62,44 +62,51 @@ public class TickerGrabber implements Runnable {
     }
     
     private ArrayList getStockTickers(List stockTickers) {
-        String ticker, ticekr2, ticker3, line; 
+        String ticker = null, line;  
         ArrayList errorTickers = new ArrayList(); 
+        ArrayList csvOutput = new ArrayList(); 
+        String[] lineSplit = new String[4]; 
         
         for(Iterator tickers = stockTickers.iterator(); tickers.hasNext(); ) {
-            StringBuilder builder = new StringBuilder(); 
             // First we'll do one letter. 
            ticker = (String)tickers.next(); 
-           // ticker2 = (String)tickers.next(); 
-            try {
-                  URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
-                  URLConnection conn = tickerLookup.openConnection(); 
-                  try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
-                  BufferedReader data = new BufferedReader(in); ) {
-                    while((line = data.readLine()) != null) {
-                        builder.append(line); 
+           // Now we'll append all of the the other letters in this ticker to that. 
+           while(tickers.hasNext()) {
+               ticker += '+' + (String)tickers.next(); 
+           }
+        }   
+           
+        try {
+            StringBuilder builder = new StringBuilder(); 
+
+            URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
+            URLConnection conn = tickerLookup.openConnection(); 
+            try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
+                BufferedReader data = new BufferedReader(in); ) {
+                while((line = data.readLine()) != null) {
+                    if(!line.contains("N/A")) {
+                        lineSplit = line.split("\","); 
+                        csvOutput.add(lineSplit[0].replace("\"", "")); 
+                        csvOutput.add(lineSplit[1].replace("\"", "")); 
+                        csvOutput.add(lineSplit[2].replace("\"", "")); 
+                        csvOutput.add(lineSplit[3].replace("\"", "")); 
                     }
-                    System.out.println(builder.toString()); 
-                    in.close();
-                    // If either the Stock Exchange or price is N/A, then this ticker doesn't exist 
-                    // (or if for some strange reason the API spit out N/A, we don't want it.                     
-                    if(!builder.toString().isEmpty() && !builder.toString().contains("N/A")) {
-                        storeData(builder); 
-                    }
-                    finalTickers.add(ticker);
-                  }
-            } catch(MalformedURLException mue) {
-                // mue.printStackTrace();                
-                System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
-            } catch(IOException ioe) {
-                System.out.println(ticker); 
-                errorTickers.add(ticker); 
-                System.out.println("IO Error: " + ioe.getMessage()); 
-            } 
-        }
-        
-        // System.out.println("Done"); 
-        // System.out.println("" + errorTickers.size()); 
-        // System.out.println(errorTickers.toString()); 
+                }
+                in.close();
+                // If either the Stock Exchange or price is N/A, then this ticker doesn't exist 
+                // (or if for some strange reason the API spit out N/A, we don't want it.                     
+                if(!builder.toString().isEmpty() && !builder.toString().contains("N/A")) {
+                    storeData(builder); 
+                }
+                finalTickers.add(ticker);
+            }
+        } catch(MalformedURLException mue) {
+            System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
+        } catch(IOException ioe) {
+            System.out.println(ticker); 
+            errorTickers.add(ticker); 
+            System.out.println("IO Error: " + ioe.getMessage()); 
+        } 
     return errorTickers; 
     }
     
