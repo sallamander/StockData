@@ -109,30 +109,25 @@ public class TickerGrabber implements Runnable {
     }
     
     private void storeTickers(ArrayList endList) {
-        int count = 0; 
-        String data1, data2, data3, data4; 
-        for(Iterator i = endList.iterator(); i.hasNext(); ) {
-                data1 = i.next().toString(); 
-                data2 = i.next().toString(); 
-                data3 = i.next().toString(); 
-                data4 = i.next().toString(); 
-                String datasource = "jdbc:mysql://localhost:3306/stocks"; 
-                try( Connection conn = DriverManager.getConnection(datasource, "root", "healthy15")) {
-                    Class.forName("com.mysql.jdbc.Driver");
-                    PreparedStatement prep = conn.prepareStatement("INSERT INTO " + month + year + "(name, "
-                            + "ticker, exchange, price) VALUES(?, ?, ?, ?)"); 
-                    prep.setString(1, data1); 
-                    prep.setString(2, data2); 
-                    prep.setString(3, data3); 
-                    prep.setString(4, data4); 
-                    prep.executeUpdate();
-                    conn.close(); 
-                } catch (SQLException sqe) {
-                    System.out.println("SQL Error: " + sqe.getMessage());
-                } catch (ClassNotFoundException cnfe) {
-                    System.out.println(cnfe.getMessage()); 
-                } 
-            
-        }
+        String datasource = "jdbc:mysql://localhost:3306/stocks"; 
+        // Let's make the connection first, and then we can cyle through our ticker list while it's open. 
+        // There's no point in making the connection over and over and over again. 
+        try( Connection conn = DriverManager.getConnection(datasource, "root", "healthy15")) {
+            Class.forName("com.mysql.jdbc.Driver");
+            PreparedStatement prep = conn.prepareStatement("INSERT INTO " + month + year + "(name, "
+                + "ticker, exchange, price) VALUES(?, ?, ?, ?)"); 
+            for(Iterator i = endList.iterator(); i.hasNext(); ) {
+                prep.setString(1, i.next().toString()); 
+                prep.setString(2, i.next().toString()); 
+                prep.setString(3, i.next().toString()); 
+                prep.setString(4, i.next().toString()); 
+                prep.executeUpdate(); 
+            }
+            conn.close(); 
+        } catch (SQLException sqe) {
+            System.out.println("SQL Error: " + sqe.getMessage());
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println(cnfe.getMessage()); 
+        } 
     }
 }
