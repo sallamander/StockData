@@ -10,14 +10,12 @@
 */
 
 import java.util.*; 
-import java.sql.*; 
-import java.text.*; 
 
 public class TickerLocater {; 
     ArrayList tickerList; 
     String month, year; 
     
-    public TickerLocater(String month, String year) {
+    public TickerLocater(String month, String year, TableManager manager) {
         this.month = month; 
         this.year = year; 
         
@@ -36,10 +34,10 @@ public class TickerLocater {;
         int bPoint = 0; 
         while(bPoint * breakPoint <= tickerList.size()) {
             if(bPoint * breakPoint + breakPoint >= tickerList.size()) {
-                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, tickerList.size()) , month, year)); 
+                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, tickerList.size()) , month, year, manager)); 
             } else if(bPoint * breakPoint >= tickerList.size()) {
             } else {
-                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, (bPoint + 1) * breakPoint) , month, year));
+                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, (bPoint + 1) * breakPoint) , month, year, manager));
             }
             bPoint++; 
         }

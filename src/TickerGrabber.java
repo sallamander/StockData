@@ -35,11 +35,13 @@ public class TickerGrabber implements Runnable {
     String month, year; 
     private Thread runner; 
     ArrayList endList, errorTickers, finalTickers; 
+    TableManager manager; 
     
-    public TickerGrabber(List stockTickers, String month, String year) {
+    public TickerGrabber(List stockTickers, String month, String year, TableManager manager) {
         this.stockTickers = stockTickers; // This will hold the specfic stockTickers this particular Grabber will look up. 
         this.month = month; 
         this.year = year; 
+        this.manager = manager; 
         endList = new ArrayList(); 
         errorTickers = new ArrayList(); 
         finalTickers = new ArrayList(); 

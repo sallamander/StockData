@@ -44,6 +44,7 @@ public class StockFinder {
         // of a TableManager and make sure that the 
         TableManager manager = new TableManager(); 
         manager.createMasterTable();
-        TickerLocater tl = new TickerLocater(manager.month, manager.year); 
+        manager.createPennyTable(); 
+        TickerLocater tl = new TickerLocater(manager.month, manager.year, manager); 
     }
 }
