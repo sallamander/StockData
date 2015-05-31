@@ -18,7 +18,7 @@
     primarly revolves around figuring out the optimal number of threads to run this program with 
     on my computer (and then later a server). 
 
-This class will prep our database and program to actually go into the Yahoo
+    This class will prep our database and program to actually go into the Yahoo
     Finance API and grab stock tickers for us. There are two primary things that
     we will need to do in this method: 
 
@@ -39,6 +39,11 @@ This class will prep our database and program to actually go into the Yahoo
 public class StockFinder {
  
     public static void main(String[] arguments) {   
-        TickerLocater tl = new TickerLocater(); 
+        // Anytime we are using the TickerLocater we will be looking to see what tickers
+        // there are and getting a master list. As such, we'll need to create an instance
+        // of a TableManager and make sure that the 
+        TableManager manager = new TableManager(); 
+        manager.createMasterTable();
+        TickerLocater tl = new TickerLocater(manager.month, manager.year); 
     }
 }

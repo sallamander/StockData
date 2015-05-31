@@ -4,13 +4,7 @@
    letters). Then, it will break that ArrayList apart into a designated number of pieces 
    and feed those pieces to a TickerGrabber, which is just a separate thread that will 
    make calls to the Yahoo Finance API to grab ticker information. The part that is still 
-   under "Beta" testing is how many pieces to split the ArrayList into. This class will 
-   also create the mySQL data table where each of the TickerGrabbers will store the
-   ticker data that they grab. 
-
-   At the time of writing, this code was being prepped for a code portfolio, and as a result 
-   simply looks for all stock tickers that are 1 letter and uses only 1 TickerGrabber. However, 
-   the other code is left in for easy adjustment if anybody would like to play around with it. 
+   under "Beta" testing is how many pieces to split the ArrayList into. 
 
     -Sallamander 04/15/2015. 
 */
@@ -22,16 +16,13 @@ import java.text.*;
 public class TickerLocater {; 
     ArrayList tickerList; 
     String month, year; 
-    public TickerLocater() {
+    
+    public TickerLocater(String month, String year) {
+        this.month = month; 
+        this.year = year; 
+        
         // We'll create the list of tickers that we will feed into the TickerGrabbers. 
         tickerList = createTickerList(); 
-        
-        // Now we'll create the table where the TickerGrabbers will store all the information. 
-        Calendar cal = Calendar.getInstance(); 
-        month  = new SimpleDateFormat("MMM").format(cal.getTime()); 
-        year = new SimpleDateFormat("YYYY").format(cal.getTime()); 
-        
-        createTable();
         
         // Now let's actually grab the information we want. We'll do this my creating 
         // multiple tickerGrabbers and letting them do the work. Generating this many tickers 
@@ -67,7 +58,7 @@ public class TickerLocater {;
         // individual ticker variables will hold the letters we will use to 
         // create our tickers. 
         ArrayList tickerList = new ArrayList(); 
-        String ticker, ticker2, ticker3, ticker4;
+        String ticker, ticker2, ticker3, ticker4, ticker5;
         
         // Here we'll just cycle through the letters list, once for each individual 
         // letter position in the possible ticker (1-4). So our tickerList should end 
@@ -83,42 +74,13 @@ public class TickerLocater {;
                 for(Iterator letter3 = letters.iterator(); letter3.hasNext(); ) {
                     ticker3 = (String)letter3.next(); 
                     tickerList.add(ticker + ticker2 + ticker3); 
-                    /*
                     for(Iterator letter4 = letters.iterator(); letter4.hasNext(); ) {
                         ticker4 = (String)letter4.next(); 
                         tickerList.add(ticker + ticker2 + ticker3 + ticker4); 
                     }
-                    */
                 }
             }
         }        
         return tickerList; 
-    }
-    
-    private void createTable() {   
-         String datasource = "jdbc:mysql://localhost:3306/stocks"; 
-         
-         try( Connection conn = DriverManager.getConnection(datasource, "root", "healthy15")) {
-             // Check if the table exists already. 
-             Statement st = conn.createStatement(); 
-             ResultSet rs = st.executeQuery("show tables like '" + month + year + "'"); 
-             if(rs.next()) {
-                // If it exists, delete it so we can recreate it. This mainly for testing purposes, but 
-                // I'll leave it in here so we don't get any errors in the future, or if I change my mind
-                // and want to run the tickers code more often than once a month (but at that point I'll 
-                // probably update the table name to indicate that, rather than delete the table). 
-                PreparedStatement tableDelete = conn.prepareStatement("drop table " + month + year); 
-                tableDelete.executeUpdate(); 
-             }
-             
-             // Now let's create the table. 
-             PreparedStatement tableCreate = conn.prepareStatement("create table " + month + year + "(ticker varchar(10), name varchar(100),"
-                        + "exchange varchar(10), price float, constraint pk_all_tickers primary key (ticker))");
-             tableCreate.executeUpdate(); 
-             conn.close(); 
-         } catch (SQLException sqe) {
-                System.out.println("SQL Error: " + sqe.getMessage());
-              
-         }
     }
 }

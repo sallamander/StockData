@@ -62,7 +62,7 @@ public class TickerGrabber implements Runnable {
     }
     
     private ArrayList getStockTickers(List stockTickers) {
-        System.out.println(stockTickers.size()); 
+        // System.out.println(stockTickers.size()); 
         String ticker = null, line;  
         ArrayList errorTickers = new ArrayList(); 
         String[] lineSplit = new String[4]; 
@@ -100,7 +100,7 @@ public class TickerGrabber implements Runnable {
             } catch(MalformedURLException mue) {
                 System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
             } catch(IOException ioe) {
-                System.out.println(ticker); 
+                // System.out.println(ticker); 
                 errorTickers.add(ticker); 
                 System.out.println("IO Error: " + ioe.getMessage()); 
             } 
