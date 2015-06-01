@@ -15,7 +15,7 @@ public class TickerLocater {;
     ArrayList tickerList; 
     String month, year; 
     
-    public TickerLocater(String month, String year, TableManager manager) {
+    public TickerLocater(String month, String year) {
         this.month = month; 
         this.year = year; 
         
@@ -34,10 +34,10 @@ public class TickerLocater {;
         int bPoint = 0; 
         while(bPoint * breakPoint <= tickerList.size()) {
             if(bPoint * breakPoint + breakPoint >= tickerList.size()) {
-                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, tickerList.size()) , month, year, manager)); 
+                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, tickerList.size()) , month, year)); 
             } else if(bPoint * breakPoint >= tickerList.size()) {
             } else {
-                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, (bPoint + 1) * breakPoint) , month, year, manager));
+                tickerGrabbers.add(new TickerGrabber(tickerList.subList(bPoint * breakPoint, (bPoint + 1) * breakPoint) , month, year));
             }
             bPoint++; 
         }
@@ -56,7 +56,7 @@ public class TickerLocater {;
         // individual ticker variables will hold the letters we will use to 
         // create our tickers. 
         ArrayList tickerList = new ArrayList(); 
-        String ticker, ticker2, ticker3, ticker4, ticker5;
+        String ticker, ticker2, ticker3, ticker4;
         
         // Here we'll just cycle through the letters list, once for each individual 
         // letter position in the possible ticker (1-4). So our tickerList should end 
@@ -69,6 +69,7 @@ public class TickerLocater {;
             for(Iterator letter2 = letters.iterator(); letter2.hasNext(); ) {
                 ticker2 = (String)letter2.next(); 
                 tickerList.add(ticker + ticker2);
+               
                 for(Iterator letter3 = letters.iterator(); letter3.hasNext(); ) {
                     ticker3 = (String)letter3.next(); 
                     tickerList.add(ticker + ticker2 + ticker3); 

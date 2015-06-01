@@ -35,13 +35,11 @@ public class TickerGrabber implements Runnable {
     String month, year; 
     private Thread runner; 
     ArrayList endList, errorTickers, finalTickers; 
-    TableManager manager; 
     
-    public TickerGrabber(List stockTickers, String month, String year, TableManager manager) {
+    public TickerGrabber(List stockTickers, String month, String year) {
         this.stockTickers = stockTickers; // This will hold the specfic stockTickers this particular Grabber will look up. 
         this.month = month; 
         this.year = year; 
-        this.manager = manager; 
         endList = new ArrayList(); 
         errorTickers = new ArrayList(); 
         finalTickers = new ArrayList(); 
@@ -58,7 +56,7 @@ public class TickerGrabber implements Runnable {
             errorTickers = getStockTickers(errorTickers); 
         }
         
-        if(errorTickers.size() == 0) {
+        if(errorTickers.isEmpty()) {
             storeTickers(endList); 
         }
     }
@@ -68,19 +66,20 @@ public class TickerGrabber implements Runnable {
         String ticker = null, line;  
         ArrayList errorTickers = new ArrayList(); 
         String[] lineSplit = new String[4]; 
+        URL tickerLookup = null; 
         
         for(Iterator tickers = stockTickers.iterator(); tickers.hasNext(); ) {
             // First we'll do one letter. 
            ticker = (String)tickers.next(); 
            // Now we'll append up to 1000 other tickers to this. 
            int i = 0; 
-           while(tickers.hasNext() & i <= 499) {
+           while(tickers.hasNext() & i <= 100) {
                ticker += '+' + (String)tickers.next(); 
                i += 1; 
            }   
            
             try {
-                URL tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
+                tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
                 // System.out.println(tickerLookup.toString());            
                 URLConnection conn = tickerLookup.openConnection(); 
                 try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
@@ -104,6 +103,8 @@ public class TickerGrabber implements Runnable {
             } catch(IOException ioe) {
                 // System.out.println(ticker); 
                 errorTickers.add(ticker); 
+                // System.out.println(tickerLookup); 
+                // System.out.println(tickerLookup.toString().length()); 
                 System.out.println("IO Error: " + ioe.getMessage()); 
             } 
         }
@@ -115,16 +116,24 @@ public class TickerGrabber implements Runnable {
         // Let's make the connection first, and then we can cyle through our ticker list while it's open. 
         // There's no point in making the connection over and over and over again. 
         try( Connection conn = DriverManager.getConnection(datasource, "root", "healthy15")) {
+            String dataPoint1, dataPoint2, dataPoint3, dataPoint4; 
+            PreparedStatement prep;
             Class.forName("com.mysql.jdbc.Driver");
-            PreparedStatement prep = conn.prepareStatement("INSERT INTO " + month + year + "(name, "
-                + "ticker, exchange, price) VALUES(?, ?, ?, ?)"); 
             for(Iterator i = endList.iterator(); i.hasNext(); ) {
-                prep.setString(1, i.next().toString()); 
-                prep.setString(2, i.next().toString()); 
-                prep.setString(3, i.next().toString()); 
-                prep.setString(4, i.next().toString()); 
+                dataPoint1 = i.next().toString(); 
+                dataPoint2 = i.next().toString(); 
+                dataPoint3 = i.next().toString(); 
+                dataPoint4 = i.next().toString(); 
+                prep = conn.prepareStatement("INSERT INTO " + month + year + "(name, "
+                + "ticker, exchange, price) VALUES(\"" + dataPoint1 + "\",\"" + dataPoint2 + "\",\"" + dataPoint3 + "\",\"" + dataPoint4 + "\")"); 
                 prep.executeUpdate(); 
+                
+                if (Float.parseFloat(dataPoint4) <= 5.00) {
+                    prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker, price) VALUES(\"" + dataPoint2 + "\",\"" + dataPoint4 + "\")"); 
+                    prep.executeUpdate(); 
+                }
             }
+            // prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker) VALUES(?)"); 
             conn.close(); 
         } catch (SQLException sqe) {
             System.out.println("SQL Error: " + sqe.getMessage());

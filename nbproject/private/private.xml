@@ -2,6 +2,11 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/ssallamander/Documents/NetBeansProjects/StockData2/src/StockFinder.java</file>
+            <file>file:/C:/Users/ssallamander/Documents/NetBeansProjects/StockData2/src/TableManager.java</file>
+            <file>file:/C:/Users/ssallamander/Documents/NetBeansProjects/StockData2/src/TickerLocater.java</file>
+            <file>file:/C:/Users/ssallamander/Documents/NetBeansProjects/StockData2/src/TickerGrabber.java</file>
+        </group>
     </open-files>
 </project-private>
