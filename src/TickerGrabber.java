@@ -73,14 +73,14 @@ public class TickerGrabber implements Runnable {
            ticker = (String)tickers.next(); 
            // Now we'll append up to 1000 other tickers to this. 
            int i = 0; 
-           while(tickers.hasNext() & i <= 100) {
+           while(tickers.hasNext() & ticker.length() <= 5000) {
                ticker += '+' + (String)tickers.next(); 
-               i += 1; 
            }   
            
             try {
                 tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
-                // System.out.println(tickerLookup.toString());            
+                System.out.println(tickerLookup.toString().length());
+                System.out.println(tickerLookup.toString());            
                 URLConnection conn = tickerLookup.openConnection(); 
                 try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
                     BufferedReader data = new BufferedReader(in); ) {
@@ -131,6 +131,9 @@ public class TickerGrabber implements Runnable {
                 if (Float.parseFloat(dataPoint4) <= 5.00) {
                     prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker, price) VALUES(\"" + dataPoint2 + "\",\"" + dataPoint4 + "\")"); 
                     prep.executeUpdate(); 
+                    
+                    prep = conn.prepareStatement("INSERT INTO daily_tickers (ticker) VALUES(\"" + dataPoint2 + "\")"); 
+                    prep.executeUpdate();
                 }
             }
             // prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker) VALUES(?)"); 
