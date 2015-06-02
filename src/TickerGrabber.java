@@ -73,14 +73,12 @@ public class TickerGrabber implements Runnable {
            ticker = (String)tickers.next(); 
            // Now we'll append up to 1000 other tickers to this. 
            int i = 0; 
-           while(tickers.hasNext() & ticker.length() <= 5000) {
+           while(tickers.hasNext() & ticker.length() <= 8000) {
                ticker += '+' + (String)tickers.next(); 
            }   
            
             try {
-                tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv"); 
-                System.out.println(tickerLookup.toString().length());
-                System.out.println(tickerLookup.toString());            
+                tickerLookup = new URL("http://quote.yahoo.com/d/quotes.csv?s=" + ticker + "&f=nsxp&e=.csv");             
                 URLConnection conn = tickerLookup.openConnection(); 
                 try (InputStreamReader in = new InputStreamReader(conn.getInputStream()); 
                     BufferedReader data = new BufferedReader(in); ) {
@@ -101,10 +99,9 @@ public class TickerGrabber implements Runnable {
             } catch(MalformedURLException mue) {
                 System.out.println("Bad URL: " + ticker + " " + mue.getMessage()); 
             } catch(IOException ioe) {
-                // System.out.println(ticker); 
                 errorTickers.add(ticker); 
-                // System.out.println(tickerLookup); 
-                // System.out.println(tickerLookup.toString().length()); 
+                System.out.println(tickerLookup); 
+                System.out.println(tickerLookup.toString().length()); 
                 System.out.println("IO Error: " + ioe.getMessage()); 
             } 
         }
