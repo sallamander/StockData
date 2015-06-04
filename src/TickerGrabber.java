@@ -11,18 +11,12 @@
     The TickerGrabber class will be set up to run in it's own thread, such that I can 
     create multiple TickerGrabbers and have them all running asynchronously in their own 
     threads. Furtherrmore, the TickerGrabbers will be set up to send calls to the Yahoo
-    Finance API in batches, so that I can grab the stats for multiple tickers at once. Note 
-    that I will test this batch method and see if it is truly faster - if it is not I will 
-    scrap it (but leave this note in here to let the reader know I did consider and test it). 
+    Finance API in batches, so that I can grab the stats for multiple tickers at once. 
 
     Finally, since I will be creating multiple ticker grabbers and trying to maximize the use of
     ports to get this done as quickly as possible, the error handling that will result will basically  
-    just take any tickers that there are errors for and stick them in an ArrayList. Then, since 
-    Yahoo Finance has a limit on their calls per hour, I'll put the thread to sleep for an hour or so, 
-    and then start the ticker grabber over using the list of tickers that had errors as the new input. 
-    Note that the thread will only be put to sleep after it has gone through the entire intial list 
-    (or error list in subsequent operations), no matter how many errors. But this sleeping will only 
-    take place when I'm doing large numbers of tickers (i.e. not right now). 
+    just take any tickers that there are errors for and stick them in an ArrayList. Then I'll start 
+    the ticker grabber over using the list of tickers that had errors as the new input. 
 */
 
 import java.io.*;
@@ -69,9 +63,11 @@ public class TickerGrabber implements Runnable {
         URL tickerLookup = null; 
         
         for(Iterator tickers = stockTickers.iterator(); tickers.hasNext(); ) {
-            // First we'll do one letter. 
+            // First we'll do one ticker
            ticker = (String)tickers.next(); 
-           // Now we'll append up to 1000 other tickers to this. 
+           // Now we'll append tickers up to a length of 8000 - this length has 
+           // been tested and found to the be the max acceptable. Any longer and 
+           // http resposne comes back with 414 (URL too long). 
            int i = 0; 
            while(tickers.hasNext() & ticker.length() <= 8000) {
                ticker += '+' + (String)tickers.next(); 
@@ -86,7 +82,6 @@ public class TickerGrabber implements Runnable {
                         // If the line contains N/A, then we don't want to store it. 
                         if(!line.contains("N/A")) {
                             lineSplit = line.split("\","); 
-                            // System.out.println(lineSplit[0] + ' ' + lineSplit[1] + ' ' + lineSplit[2] + ' ' + lineSplit[3]); 
                             endList.add(lineSplit[0].replace("\"", "")); 
                             endList.add(lineSplit[1].replace("\"", "")); 
                             endList.add(lineSplit[2].replace("\"", "")); 
@@ -133,7 +128,6 @@ public class TickerGrabber implements Runnable {
                     prep.executeUpdate();
                 }
             }
-            // prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker) VALUES(?)"); 
             conn.close(); 
         } catch (SQLException sqe) {
             System.out.println("SQL Error: " + sqe.getMessage());

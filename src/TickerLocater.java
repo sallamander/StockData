@@ -1,12 +1,8 @@
-/* This class is going to set up the phase 1 as described in the main class. It will 
-   accomplish this in a couple of different steps. First, it will create an ArrayList 
-   of all possible stock tickers that we want to grab information for (all combos of 1-4 
-   letters). Then, it will break that ArrayList apart into a designated number of pieces 
-   and feed those pieces to a TickerGrabber, which is just a separate thread that will 
-   make calls to the Yahoo Finance API to grab ticker information. The part that is still 
-   under "Beta" testing is how many pieces to split the ArrayList into. 
-
-    -Sallamander 04/15/2015. 
+/* First, this class will create an ArrayList of all possible stock tickers that we want 
+   to grab information for (all combos of 1-4 letters). Then, it will break that 
+   ArrayList apart into a designated number of pieces and feed those pieces to a 
+   TickerGrabber, which is just a separate thread that will make calls to the Yahoo
+   Finance API to grab ticker information. 
 */
 
 import java.util.*; 
@@ -44,7 +40,7 @@ public class TickerLocater {;
     }
     
     private ArrayList createTickerList() {
-        // This will hold all of the possible letters in the stock tickers, and 
+        // This will hold all of the possible letters in the stock tickers (A-Z), and 
         // then we'll simply cycle through them and see what we find. 
         ArrayList letters = new ArrayList();
         for(char letter = 'a'; letter <= 'z'; letter++) {
@@ -59,8 +55,7 @@ public class TickerLocater {;
         String ticker, ticker2, ticker3, ticker4;
         
         // Here we'll just cycle through the letters list, once for each individual 
-        // letter position in the possible ticker (1-4). So our tickerList should end 
-        // up with 26^4 possible tickers.
+        // letter position in the possible ticker (1-4). 
         for(Iterator letter1 = letters.iterator(); letter1.hasNext(); ) {
             ticker = (String)letter1.next(); 
             tickerList.add(ticker); 
@@ -68,8 +63,7 @@ public class TickerLocater {;
             // grab all stock tickers that are 1-4 letters. 
             for(Iterator letter2 = letters.iterator(); letter2.hasNext(); ) {
                 ticker2 = (String)letter2.next(); 
-                tickerList.add(ticker + ticker2);
-               
+                tickerList.add(ticker + ticker2);          
                 for(Iterator letter3 = letters.iterator(); letter3.hasNext(); ) {
                     ticker3 = (String)letter3.next(); 
                     tickerList.add(ticker + ticker2 + ticker3); 

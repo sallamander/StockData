@@ -1,7 +1,5 @@
-/* This file here will handle all of the table creation, deletion, etc. 
-   that occurs in this program. 
-
-   -Jones 05/30/2015
+/* This file here will handle all of the table creation and deletion that occurs 
+   in the program. 
 */
 
 import java.text.*;
@@ -33,7 +31,7 @@ public class TableManager {
                    + "exchange varchar(10), price float, constraint primary key (ticker))");
                 tableCreate.executeUpdate(); 
              } else {
-                 
+                
              }      
              conn.close(); 
          } catch (SQLException sqe) {
