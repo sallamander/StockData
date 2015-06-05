@@ -120,7 +120,7 @@ public class TickerGrabber implements Runnable {
                 + "ticker, exchange, price) VALUES(\"" + dataPoint1 + "\",\"" + dataPoint2 + "\",\"" + dataPoint3 + "\",\"" + dataPoint4 + "\")"); 
                 prep.executeUpdate(); 
                 
-                if (Float.parseFloat(dataPoint4) <= 5.00) {
+                if (Float.parseFloat(dataPoint4) <= 5.00 | dataPoint3.equals("PNK")) {
                     prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker, price) VALUES(\"" + dataPoint2 + "\",\"" + dataPoint4 + "\")"); 
                     prep.executeUpdate(); 
                     
