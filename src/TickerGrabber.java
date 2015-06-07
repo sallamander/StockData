@@ -124,7 +124,7 @@ public class TickerGrabber implements Runnable {
                     prep = conn.prepareStatement("INSERT INTO " + month + year + "_penny_tickers (ticker, price) VALUES(\"" + dataPoint2 + "\",\"" + dataPoint4 + "\")"); 
                     prep.executeUpdate(); 
                     
-                    prep = conn.prepareStatement("INSERT INTO daily_tickers (ticker) VALUES(\"" + dataPoint2 + "\")"); 
+                    prep = conn.prepareStatement("INSERT INTO daily_tickers_list (ticker) VALUES(\"" + dataPoint2 + "\")"); 
                     prep.executeUpdate();
                 }
             }

@@ -27,6 +27,7 @@ public class StockFinder {
         // there are and getting a master list. As such, we'll need to create an instance
         // of a TableManager and make sure that the 
         TableManager manager = new TableManager(); 
+        manager.createDailyDetailedTable(); 
         manager.createMasterTable();
         manager.createPennyTable(); 
         manager.createDailyStocksTable(); 

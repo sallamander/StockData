@@ -89,8 +89,27 @@ public class TableManager {
              }
              
              // Now let's create the table. 
-             PreparedStatement tableCreate = conn.prepareStatement("create table daily_tickers (ticker varchar(10), "
+             PreparedStatement tableCreate = conn.prepareStatement("create table daily_tickers_list (ticker varchar(10), "
                      + " constraint primary key (ticker), constraint foreign key (ticker) references " + month + year + "(ticker))");
+             tableCreate.executeUpdate(); 
+             conn.close(); 
+         } catch (SQLException sqe) {
+                System.out.println("SQL Error: " + sqe.getMessage());           
+         }
+    }
+    
+    public void createDailyDetailedTable() {
+        // This is the table that will hold all of the actual stock information that
+        // we grab every day. 
+        String datasource = "jdbc:mysql://localhost:3306/stocks"; 
+        
+        try( Connection conn = DriverManager.getConnection(datasource, "root", "healthy15")) {             
+             PreparedStatement tableCreate = conn.prepareStatement("create table daily_tickers_data (ticker varchar(10), date_time datetime, "
+                     + "previous_close float, opening_price float, ask float, bid float, days_low float, days_high float, moving_average_50 "
+                     + "float, moving_average_200 float, volume float, dailiy_average_volume float, dividend_yield float, "
+                     + "dividend_per_share float, earnings_per_share float, p_e_ratio float, p_e_g_ratio float, book_value float, "
+                     + "revenue float, holdings_value float, market_cap float, shares_owned float, shares_outstanding float, "
+                     + "float_shares float, short_ratio float, constraint primary key (ticker, date_time))"); 
              tableCreate.executeUpdate(); 
              conn.close(); 
          } catch (SQLException sqe) {
